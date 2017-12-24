@@ -96,12 +96,38 @@ func main() {
 				msg := tgbotapi.NewMessage(update.Message.Chat.ID, "🏓 Pong!")
 				msg.ReplyToMessageID = update.Message.MessageID
 				tgbot.Send(msg)
-			} else
-			//Telegram -> Discord
-			if update.Message.Chat.ID == chatGroup {
-				//if the message comes from the group i wanted, forward it
-				dg.ChannelMessageSend(discordChannel, (update.Message.From.FirstName + " [@" + update.Message.From.UserName + "]: " + update.Message.Text))
+				continue
 			}
+			
+			var Message string
+			if update.Message.Text != "" {
+				Message = update.Message.Text
+			}
+
+			//Telegram -> Discord
+			if update.Message.Audio != nil {
+				Message = "[Audio file]"
+			} else if update.Message.Document != nil {
+				if strings.HasSuffix(update.Message.Document.FileName, ".mp4") {
+					Message = "[GIF or Video]"
+				} else {
+					Message = "[Document]"
+				}
+			} else if update.Message.Photo != nil {
+				Message = "[Photo] " + update.Message.Caption
+			} else if update.Message.Sticker != nil {
+				Message = "[Sticker] " + update.Message.Sticker.Emoji
+			}
+
+			if Message != "" {
+				//Telegram -> Discord
+				if update.Message.Chat.ID == chatGroup {
+				//if the message comes from the group i wanted, forward it
+					dg.ChannelMessageSend(discordChannel, (update.Message.From.FirstName + " [@" + update.Message.From.UserName + "]: " + Message))
+				}
+			}
+			
+		
 		}
 	}
 
