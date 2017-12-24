@@ -70,9 +70,11 @@ func main() {
 		} else {
 			//Discord -> Telegram
 			//Forward all the messages from discord to a chat group
-			msg := tgbotapi.NewMessage(chatGroup, m.Author.Username+": "+m.Content)
-			fmt.Println(tgbot)
-			tgbot.Send(msg)
+			if m.ChannelID == discordChannel {
+				msg := tgbotapi.NewMessage(chatGroup, m.Author.Username+": "+m.Content)
+				fmt.Println(tgbot)
+				tgbot.Send(msg)
+			}
 		}
 
 	})
